@@ -3,6 +3,7 @@
   "NvChad": { "branch": "v2.5", "commit": "add44b952d631981614bbb8cfc6f7002f296dfe6" },
   "arrow.nvim": { "branch": "master", "commit": "6e0f726f55f99332dd726a53effd6813786b6d49" },
   "base46": { "branch": "v3.0", "commit": "2ffb8eda35cfb3547d0d7dce30f4f2f0f674c4d7" },
+  "cendre": { "branch": "main", "commit": "43b07b26b2d49fbcfe1693a9c4b7a485bfc4e21e" },
   "cheatsheet.nvim": { "branch": "master", "commit": "9716f9aaa94dd1fd6ce59b5aae0e5f25e2a463ef" },
   "cmp-async-path": { "branch": "main", "commit": "98185a91d49ff5dd249aebf2f7456e18063fa2a0" },
   "cmp-buffer": { "branch": "main", "commit": "b74fab3656eea9de20a9b8116afa3cfc4ec09657" },

@@ -76,6 +76,17 @@ return {
   cmd = "Neogit",
   config = true,
 },
+{
+  "Aejkatappaja/cendre",
+  lazy = false,
+  priority = 1000,
+  config = function()
+    local cendre = require "configs.cendre"
+    require("cendre").setup(cendre)
+    vim.cmd.colorscheme "cendre"
+    cendre.attach()
+  end,
+},
   {'echasnovski/mini.align', opts = {}, event = "VeryLazy" },
   {'echasnovski/mini.surround', opts = {}, event = "VeryLazy" },
 {
