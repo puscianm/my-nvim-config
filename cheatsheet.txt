@@ -1,0 +1,26 @@
+## _telescope-file-browser
+Create file         | a
+Create folder       | A
+Rename              | r
+Delete              | d
+Copy                | c
+Move                | m
+Toggle hidden files | H
+
+## _buffers-and-windows
+Next buffer         | ]b
+Help moving windows | :help :wincmd
+
+## _jumping
+Jump to next occurance     | f{char}
+Repeat last jump           | ;
+Repeat last jump backwards | ,
+
+## _changing
+Change inside brackets                    | ci{, ci(
+Replace untill done                       | R
+Replace in whole buffer                   | %s/old/new/g
+Replace in whole buffer with confirmation | %s/old/new/gc
+
+## _visual_mode
+Tab all lines | >
