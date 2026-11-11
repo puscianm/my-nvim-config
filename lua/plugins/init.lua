@@ -6,6 +6,35 @@ return {
     opts = require "configs.conform",
   },
 
+  -- Mason tools live in ~/.local/share/nvim, outside this repo, so a synced
+  -- config alone doesn't bring them along. Install whatever is missing from
+  -- this list on startup so every machine ends up with the same toolset.
+  {
+    "mason-org/mason.nvim",
+    event = "VeryLazy",
+    config = function(_, opts)
+      require("mason").setup(opts)
+      local ensure = {
+        "basedpyright",
+        "ruff",
+        "lua-language-server",
+        "stylua",
+        "html-lsp",
+        "css-lsp",
+      }
+      local registry = require "mason-registry"
+      registry.refresh(function()
+        for _, name in ipairs(ensure) do
+          local ok, pkg = pcall(registry.get_package, name)
+          if ok and not pkg:is_installed() then
+            vim.notify("Mason: installing " .. name)
+            pkg:install()
+          end
+        end
+      end)
+    end,
+  },
+
   {
     "neovim/nvim-lspconfig",
     config = function()
@@ -229,15 +258,43 @@ return {
     },
   },
 
+  -- nvim-treesitter's `main` branch (a rewrite, needs Nvim 0.12+) ignores
+  -- `ensure_installed` and never starts highlighting by itself: parsers are
+  -- installed with install() and highlighting is turned on per buffer with
+  -- vim.treesitter.start(). Parsers live in ~/.local/share/nvim/site, outside
+  -- this repo, so they are installed here on every machine that lacks them.
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        "vim", "lua", "vimdoc",
-        "python", "html", "css",
+    lazy = false,
+    build = ":TSUpdate",
+    config = function()
+      if vim.fn.has "nvim-0.12" ~= 1 then
+        vim.notify_once("nvim-treesitter (main) needs Nvim 0.12+; using regex highlighting", vim.log.levels.WARN)
+        return
+      end
+
+      local ts = require "nvim-treesitter"
+      local parsers = {
+        "vim", "lua", "luadoc", "vimdoc", "printf",
+        "python", "html", "css", "json", "yaml", "toml", "bash",
         "markdown", "markdown_inline",
-      },
-    },
+      }
+      local missing = vim.tbl_filter(function(lang)
+        return not vim.tbl_contains(ts.get_installed(), lang)
+      end, parsers)
+      if #missing > 0 then
+        ts.install(missing)
+      end
+
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function(args)
+          -- no-op for filetypes without an installed parser
+          if pcall(vim.treesitter.start, args.buf) then
+            vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
+        end,
+      })
+    end,
   },
 
   -- test new blink
