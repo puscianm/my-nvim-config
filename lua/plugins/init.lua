@@ -1,7 +1,8 @@
 return {
   {
     "stevearc/conform.nvim",
-    event = "BufWritePre", -- format on save, see configs/conform.lua
+    event = "BufWritePre", -- load before the first :w so format_on_save is active
+    cmd = { "ConformInfo" },
     opts = require "configs.conform",
   },
 
