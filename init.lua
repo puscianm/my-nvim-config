@@ -31,6 +31,7 @@ require("lazy").setup({
 
 require "options"
 require "autocmds"
+require "configs.markdown" -- :MarkdownSave
 
 vim.schedule(function()
   require "mappings"

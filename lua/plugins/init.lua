@@ -184,14 +184,37 @@ return {
     },
   },
 
+  -- Data -----------------------------------------------------------------
+  -- Column-aligned CSV/TSV view (virtual text only, file is untouched).
+  -- Auto-enabled on open; toggle with :CsvViewToggle.
+  {
+    "hat0uma/csvview.nvim",
+    ft = { "csv", "tsv" },
+    cmd = { "CsvViewEnable", "CsvViewDisable", "CsvViewToggle" },
+    opts = {
+      view = { display_mode = "border" },
+    },
+    config = function(_, opts)
+      require("csvview").setup(opts)
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "csv", "tsv" },
+        callback = function(args)
+          require("csvview").enable(args.buf)
+        end,
+      })
+    end,
+  },
+
   -- Markdown -------------------------------------------------------------
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
-    build = "cd app && npm install",
-    cond = function()
-      return vim.fn.executable "npm" == 1
+    -- Fetches a self-contained binary into app/bin instead of npm-installing the
+    -- Node server's dependencies, so no node toolchain is needed and the `cond`
+    -- guard that used to skip this plugin on npm-less machines can go.
+    build = function()
+      vim.fn["mkdp#util#install"]()
     end,
   },
 

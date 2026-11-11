@@ -17,6 +17,16 @@ Live grep (with rg args)         | <leader>fw
 Quote the grep prompt            | <C-k>
 Append an --iglob filter         | <C-i>
 File browser                     | <leader>fb
+Find files in another dir (once) | :Telescope find_files cwd=path
+Grep in another dir (once)       | :Telescope live_grep cwd=path
+Search several dirs at once      | :Telescope find_files search_dirs={"a","b"}
+
+## _working-directory
+Show current directory           | :pwd
+Change dir (rest of session)     | :cd path
+Change dir (this tab only)       | :tcd path
+Change dir (this window only)    | :lcd path
+Back to previous directory       | :cd -
 
 ## _telescope-file-browser
 Create file                      | a
@@ -53,6 +63,12 @@ Replace in whole buffer          | %s/old/new/g
 Replace with confirmation        | %s/old/new/gc
 Align a selection                | ga (mini.align)
 Surround / change surround       | sa / sr (mini.surround)
+Delete surrounding call          | sdf (cursor inside the parens)
+Replace surrounding call         | srff (then type the new name)
+Wrap word in a call              | saiwf
+Delete surrounding pair          | sd) / sd"
+Change ( ) to [ ]                | sr)]
+Delete a chained method call     | d% (cursor on the dot)
 
 ## _visual_mode
 Tab all lines                    | >
@@ -60,9 +76,21 @@ Comment selection                | <leader>/
 
 ## _lsp
 Hover docs                       | K
-Rename symbol                    | <leader>rn
-Code action                      | <leader>ca
+Find references (this package)   | grr
+Find usages across whole repo    | <leader>fw (ripgrep, ignores LSP root)
+Go to implementation             | gri
+Go to type definition            | grt / <leader>D
+Go to declaration                | gD
+Symbols in current file          | gO
+Rename symbol                    | <leader>rn / grn
+Code action                      | <leader>ca / gra
+Next / prev diagnostic           | ]d / [d
 Disable diagnostics              | :lua vim.diagnostic.enable(false)
+
+## _quickfix
+Open / close the list            | :copen / :cclose
+Next / prev entry                | ]q / [q
+Jump to entry under cursor       | <CR>
 
 ## _terminal
 Toggle floating terminal         | <leader>ft

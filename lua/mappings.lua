@@ -48,3 +48,6 @@ map("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
 map("n", "K", vim.lsp.buf.hover, { desc = "Hover docs" })
 map("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
+
+-- Kedro: gd / grr on dataset strings jump to producer / consumers (configs/kedro.lua)
+require("configs.kedro").setup()
