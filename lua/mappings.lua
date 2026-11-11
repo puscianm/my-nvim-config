@@ -20,6 +20,7 @@ map("n", "<leader>fw", function()
 end, { desc = "Live grep (with rg args)" })
 
 map("n", "<leader>fb", "<cmd>Telescope file_browser<cr>", { desc = "File browser" })
+map("n", "<leader>fs", "<cmd>Telescope builtin<cr>", { desc = "Telescope builtin pickers" })
 
 -- Browse other branches read-only (see configs/git_browse.lua)
 local function git_browse(fn)
