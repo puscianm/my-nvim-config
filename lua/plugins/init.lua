@@ -1,28 +1,45 @@
 return {
   {
     "stevearc/conform.nvim",
-    -- event = 'BufWritePre', -- uncomment for format on save
+    event = "BufWritePre", -- format on save, see configs/conform.lua
     opts = require "configs.conform",
   },
 
-  -- These are some examples, uncomment them if you want to see them work!
   {
     "neovim/nvim-lspconfig",
     config = function()
       require "configs.lspconfig"
     end,
   },
+
+  -- Theme. Loaded eagerly and at high priority so it wins over base46; the
+  -- statusline/tabufline groups NvChad expects are rebuilt in configs/cendre.lua.
+  {
+    "Aejkatappaja/cendre",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      local cendre = require "configs.cendre"
+      require("cendre").setup(cendre)
+      vim.cmd.colorscheme "cendre"
+      cendre.attach()
+    end,
+  },
+
+  -- Telescope: fzf sorter, ripgrep-args grep (<leader>fw), file browser (<leader>fb)
   {
     "nvim-telescope/telescope-fzf-native.nvim",
     build = "make",
     dependencies = {
       "nvim-telescope/telescope.nvim",
       "nvim-telescope/telescope-live-grep-args.nvim",
+      "nvim-telescope/telescope-file-browser.nvim",
+      "nvim-lua/plenary.nvim",
     },
     config = function()
       local lga_actions = require "telescope-live-grep-args.actions"
 
-      require("telescope").setup({
+      require("telescope").setup {
         extensions = {
           fzf = {
             fuzzy = true,
@@ -36,91 +53,105 @@ return {
               i = {
                 -- <C-k> quotes the prompt, <C-i> appends a --iglob flag
                 ["<C-k>"] = lga_actions.quote_prompt(),
-                ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+                ["<C-i>"] = lga_actions.quote_prompt { postfix = " --iglob " },
               },
             },
           },
         },
-      })
-      require("telescope").load_extension("fzf")
-      require("telescope").load_extension("live_grep_args")
+      }
+
+      require("telescope").load_extension "fzf"
+      require("telescope").load_extension "live_grep_args"
+      require("telescope").load_extension "file_browser"
     end,
   },
-{
-  "sudormrfbin/cheatsheet.nvim",
-  dependencies = {
-    "nvim-telescope/telescope.nvim",
-    "nvim-telescope/telescope-fzf-native.nvim",
-    "nvim-lua/popup.nvim",
-    "nvim-lua/plenary.nvim",
-  },
-  cmd = "Cheatsheet",
-  opts = {
-    bundled_cheatsheets = {
-      disabled = { "nerd-fonts", "markdown", "netrw", "unicode" },
+
+  {
+    "sudormrfbin/cheatsheet.nvim",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "nvim-telescope/telescope-fzf-native.nvim",
+      "nvim-lua/popup.nvim",
+      "nvim-lua/plenary.nvim",
+    },
+    cmd = "Cheatsheet",
+    opts = {
+      bundled_cheatsheets = {
+        disabled = { "nerd-fonts", "markdown", "netrw", "unicode" },
+      },
     },
   },
-},
-{
-  "tpope/vim-fugitive",
-  cmd = { "Git", "G", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gread", "Gwrite", "Gclog", "GBrowse" },
-},
-{
-  "rbong/vim-flog",
-  cmd = { "Flog", "Flogsplit", "Floggit" },
-  dependencies = { "tpope/vim-fugitive" },
-},
-{
-  "NeogitOrg/neogit",
-  dependencies = { "nvim-lua/plenary.nvim", "sindrets/diffview.nvim" },
-  cmd = "Neogit",
-  config = true,
-},
-{
-  "Aejkatappaja/cendre",
-  lazy = false,
-  priority = 1000,
-  config = function()
-    local cendre = require "configs.cendre"
-    require("cendre").setup(cendre)
-    vim.cmd.colorscheme "cendre"
-    cendre.attach()
-  end,
-},
-  {'echasnovski/mini.align', opts = {}, event = "VeryLazy" },
-  {'echasnovski/mini.surround', opts = {}, event = "VeryLazy" },
-{
-  "akinsho/toggleterm.nvim",
-  version = "*",
-  cmd = "ToggleTerm",
-  opts = {
-    direction = "float",
-    float_opts = {
-      border = "curved",
+
+  -- Git ------------------------------------------------------------------
+  {
+    "tpope/vim-fugitive",
+    cmd = { "G", "Git", "Gedit", "Gsplit", "Gdiffsplit", "Gvdiffsplit", "Gread", "Gwrite", "Ggrep", "GMove", "GRename", "GDelete", "GBrowse" },
+    keys = {
+      { "<leader>gs", "<cmd>Git<cr>", desc = "Git status (fugitive)" },
+      { "<leader>gb", "<cmd>Git blame<cr>", desc = "Git blame" },
+      { "<leader>gd", "<cmd>Gvdiffsplit<cr>", desc = "Git diff split" },
     },
   },
-},
-{
-  "folke/lazydev.nvim",
-  ft = "lua",
-  opts = {
-    library = {
-      { path = "luvit-meta/library", words = { "vim%.uv" } },
+
+  {
+    "rbong/vim-flog",
+    cmd = { "Flog", "Flogsplit", "Floggit" },
+    dependencies = { "tpope/vim-fugitive" },
+    keys = {
+      { "<leader>gl", "<cmd>Flog<cr>", desc = "Git log graph (Flog)" },
+      { "<leader>gL", "<cmd>Flog -path=%<cr>", desc = "Git log for current file" },
     },
   },
-},
-{
-  "otavioschwanck/arrow.nvim",
-  dependencies = { "nvim-tree/nvim-web-devicons" },
-  keys = { "\\", "<leader>m" },
-  opts = {
-    show_icons = true,
-    -- "\\" keeps `;` free for repeat-find
-    leader_key = "\\",
-    -- per-buffer line bookmarks; not "m", so Vim marks stay intact
-    buffer_leader_key = "<leader>m",
+
+  {
+    "sindrets/diffview.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    cmd = { "DiffviewOpen", "DiffviewFileHistory", "DiffviewClose" },
+    opts = {
+      file_panel = {
+        listing_style = "tree",
+        win_config = { width = 40 },
+      },
+    },
+    keys = {
+      -- Diffview buffers for any non-working-tree rev are read-only.
+      { "<leader>gv", "<cmd>DiffviewOpen<cr>", desc = "Diffview working tree" },
+      { "<leader>gV", ":DiffviewOpen ", desc = "Diffview vs ref (type one)" },
+      { "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", desc = "Diffview file history" },
+      { "<leader>gH", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview branch history" },
+      { "<leader>gq", "<cmd>DiffviewClose<cr>", desc = "Diffview close" },
+    },
   },
-},
+
+  -- Editing --------------------------------------------------------------
+  { "echasnovski/mini.align", opts = {}, event = "VeryLazy" },
+  { "echasnovski/mini.surround", opts = {}, event = "VeryLazy" },
+
+  {
+    "otavioschwanck/arrow.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    keys = { "\\", "<leader>m" },
+    opts = {
+      show_icons = true,
+      -- "\\" keeps `;` free for repeat-find
+      leader_key = "\\",
+      -- per-buffer line bookmarks; not "m", so Vim marks stay intact
+      buffer_leader_key = "<leader>m",
+    },
+  },
+
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    cmd = "ToggleTerm", -- keymaps live in mappings.lua (<leader>ft, <leader>f<n>t)
+    opts = {
+      direction = "float",
+      float_opts = {
+        border = "curved",
+      },
+    },
+  },
+
   {
     "hrsh7th/nvim-cmp",
     opts = function(_, opts)
@@ -143,16 +174,48 @@ return {
     end,
   },
 
+  {
+    "folke/lazydev.nvim",
+    ft = "lua",
+    opts = {
+      library = {
+        { path = "luvit-meta/library", words = { "vim%.uv" } },
+      },
+    },
+  },
+
+  -- Markdown -------------------------------------------------------------
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = "cd app && npm install",
+    cond = function()
+      return vim.fn.executable "npm" == 1
+    end,
+  },
+
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+    ft = { "markdown" },
+    opts = {
+      heading = { sign = false },
+      code = { sign = false, width = "block", right_pad = 2 },
+    },
+  },
+
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      ensure_installed = {
+        "vim", "lua", "vimdoc",
+        "python", "html", "css",
+        "markdown", "markdown_inline",
+      },
+    },
+  },
+
   -- test new blink
   -- { import = "nvchad.blink.lazyspec" },
-
-  -- {
-  -- 	"nvim-treesitter/nvim-treesitter",
-  -- 	opts = {
-  -- 		ensure_installed = {
-  -- 			"vim", "lua", "vimdoc",
-  --      "html", "css"
-  -- 		},
-  -- 	},
-  -- },
 }

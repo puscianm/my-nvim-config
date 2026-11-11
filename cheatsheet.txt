@@ -1,26 +1,96 @@
-## _telescope-file-browser
-Create file         | a
-Create folder       | A
-Rename              | r
-Delete              | d
-Copy                | c
-Move                | m
-Toggle hidden files | H
+## _buffers
+Next / prev buffer               | <Tab> / <S-Tab>
+New buffer                       | :enew
+Close current buffer             | <leader>x
+Close all buffers but current    | <leader>X
+Path of current file             | <C-g>
 
-## _buffers-and-windows
-Next buffer         | ]b
-Help moving windows | :help :wincmd
+## _tabs
+New tab                          | :tabnew
+Next tab                         | <leader><leader>
+Next / prev tab                  | gt / gT
+Help moving windows              | :help :wincmd
+
+## _finding
+Find files                       | <leader>ff
+Live grep (with rg args)         | <leader>fw
+Quote the grep prompt            | <C-k>
+Append an --iglob filter         | <C-i>
+File browser                     | <leader>fb
+
+## _telescope-file-browser
+Create file                      | a
+Create folder                    | A
+Rename                           | r
+Delete                           | d
+Copy                             | c
+Move                             | m
+Toggle hidden files              | H
+
+## _nvim-tree
+See / hide gitignored files      | I
+Refresh                          | R
+See / hide hidden files          | H
 
 ## _jumping
-Jump to next occurance     | f{char}
-Repeat last jump           | ;
-Repeat last jump backwards | ,
+Jump to next occurrence          | f{char}
+Repeat last jump                 | ;
+Repeat last jump backwards       | ,
+Jump between paragraphs          | { / }
+Half screen down / up            | <C-d> / <C-u>
+Previous / forward jump          | <C-o> / <C-i>
+Go to definition                 | gd
+Jump back from definition        | <C-t>
+
+## _bookmarks-arrow
+Bookmark files                   | \
+Bookmark lines in this buffer    | <leader>m
 
 ## _changing
-Change inside brackets                    | ci{, ci(
-Replace untill done                       | R
-Replace in whole buffer                   | %s/old/new/g
-Replace in whole buffer with confirmation | %s/old/new/gc
+Change inside brackets           | ci{, ci(
+Replace until done               | R
+Replace in whole buffer          | %s/old/new/g
+Replace with confirmation        | %s/old/new/gc
+Align a selection                | ga (mini.align)
+Surround / change surround       | sa / sr (mini.surround)
 
 ## _visual_mode
-Tab all lines | >
+Tab all lines                    | >
+Comment selection                | <leader>/
+
+## _lsp
+Hover docs                       | K
+Rename symbol                    | <leader>rn
+Code action                      | <leader>ca
+Disable diagnostics              | :lua vim.diagnostic.enable(false)
+
+## _terminal
+Toggle floating terminal         | <leader>ft
+Toggle terminal number n         | <leader>f<n>t
+Hide floating terminal           | <Esc><Esc>
+Normal mode inside terminal      | <C-\><C-n>
+
+## _git-in-nvim
+Status (fugitive)                | <leader>gs
+Blame                            | <leader>gb
+Diff split                       | <leader>gd
+Log graph (Flog)                 | <leader>gl
+Log for current file             | <leader>gL
+Diffview working tree            | <leader>gv
+Diffview vs a ref                | <leader>gV
+Diffview file history            | <leader>gh
+Diffview branch history          | <leader>gH
+Diffview close                   | <leader>gq
+Find file on another branch      | <leader>gf
+Browse tree of another branch    | <leader>gt
+Diff this file vs a branch       | <leader>gD
+
+## _git-cli
+Show tracking branches           | git branch -vv
+Copy files from another branch   | git restore --source=pl_dev -- 'src/**/*.py' ':(exclude)**/test_*.py'
+Dry run of the above             | git ls-tree -r --name-only pl_dev -- 'src/**/*.py'
+
+## _misc
+Save file                        | <C-s>
+Comment line                     | <leader>/
+Open this cheatsheet             | <leader>cs

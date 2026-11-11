@@ -1,20 +1,20 @@
--- This file needs to have same structure as nvconfig.lua 
+-- This file needs to have same structure as nvconfig.lua
 -- https://github.com/NvChad/ui/blob/v3.0/lua/nvconfig.lua
--- Please read that file to know all available options :( 
+-- Please read that file to know all available options :(
 ---@type ChadrcConfig
 local M = {}
 
+-- base46's own theming is bypassed in favour of cendre (see configs/cendre.lua);
+-- this stays set only because NvChad's ui requires a valid theme name.
 M.base46 = {
   theme = "onedark",
-  -- hl_override = {
-  --   Comment = { italic = true },
-  --   ["@comment"] = { italic = true },
-  -- },
 }
 
 M.ui = {
   tabufline = {
     modules = {
+      -- Same as NvChad's default buffers module, minus terminal buffers, so
+      -- ToggleTerm floats never take a slot in the bar.
       buffers = function()
         local buffers = {}
         local has_current = false
@@ -31,7 +31,9 @@ M.ui = {
         for i, nr in ipairs(vim.t.bufs) do
           if vim.bo[nr].buftype ~= "terminal" then
             if ((#buffers + 1) * opts.bufwidth) > available_space() then
-              if has_current then break end
+              if has_current then
+                break
+              end
               table.remove(buffers, 1)
             end
             has_current = vim.api.nvim_get_current_buf() == nr or has_current
