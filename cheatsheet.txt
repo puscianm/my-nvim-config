@@ -16,6 +16,8 @@ Find files                       | <leader>ff
 Live grep (with rg args)         | <leader>fw
 Quote the grep prompt            | <C-k>
 Append an --iglob filter         | <C-i>
+Literal search (. is a dot)      | <C-f>
+Filter grep results (fzf)        | <C-Space>
 File browser                     | <leader>fb
 Find files in another dir (once) | :Telescope find_files cwd=path
 Grep in another dir (once)       | :Telescope live_grep cwd=path
@@ -76,6 +78,7 @@ Comment selection                | <leader>/
 
 ## _lsp
 Hover docs                       | K
+Hover docs in side window (q)    | gK
 Find references (this package)   | grr
 Find usages across whole repo    | <leader>fw (ripgrep, ignores LSP root)
 Go to implementation             | gri

@@ -57,19 +57,34 @@ return {
   },
 
   -- Telescope: fzf sorter, ripgrep-args grep (<leader>fw), file browser (<leader>fb)
+  --
+  -- Configured on telescope.nvim itself, which loads whenever a picker opens.
+  -- (This used to live in telescope-fzf-native's config, but nothing ever
+  -- loaded that plugin, so none of it ran.) opts extends NvChad's own
+  -- telescope opts rather than replacing them.
   {
-    "nvim-telescope/telescope-fzf-native.nvim",
-    build = "make",
+    "nvim-telescope/telescope.nvim",
     dependencies = {
-      "nvim-telescope/telescope.nvim",
+      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
       "nvim-telescope/telescope-live-grep-args.nvim",
       "nvim-telescope/telescope-file-browser.nvim",
       "nvim-lua/plenary.nvim",
     },
-    config = function()
+    opts = function(_, opts)
       local lga_actions = require "telescope-live-grep-args.actions"
 
-      require("telescope").setup {
+      return vim.tbl_deep_extend("force", opts or {}, {
+        defaults = {
+          -- --trim drops each matched line's leading indentation; without it
+          -- a deeply indented match sits off the right edge of the results.
+          vimgrep_arguments = {
+            "rg", "--color=never", "--no-heading", "--with-filename",
+            "--line-number", "--column", "--smart-case", "--trim",
+          },
+          -- "file.py:12  dir/sub" instead of "dir/sub/file.py:12": the part
+          -- you scan for comes first, the directory is dimmed after it.
+          path_display = { "filename_first" },
+        },
         extensions = {
           fzf = {
             fuzzy = true,
@@ -81,18 +96,26 @@ return {
             auto_quoting = true,
             mappings = {
               i = {
-                -- <C-k> quotes the prompt, <C-i> appends a --iglob flag
+                -- <C-k> quotes the prompt, <C-i> appends a --iglob flag,
+                -- <C-f> searches the prompt literally (rg -F: "." is a dot)
                 ["<C-k>"] = lga_actions.quote_prompt(),
                 ["<C-i>"] = lga_actions.quote_prompt { postfix = " --iglob " },
+                ["<C-f>"] = lga_actions.quote_prompt { postfix = " -F " },
+                -- <C-Space> freezes the grep results and fuzzy-filters them,
+                -- e.g. by path ("src", "!test"), as plain live_grep does
+                ["<C-Space>"] = require("telescope.actions").to_fuzzy_refine,
               },
             },
           },
         },
-      }
-
-      require("telescope").load_extension "fzf"
-      require("telescope").load_extension "live_grep_args"
-      require("telescope").load_extension "file_browser"
+      })
+    end,
+    config = function(_, opts)
+      local telescope = require "telescope"
+      telescope.setup(opts)
+      telescope.load_extension "fzf"
+      telescope.load_extension "live_grep_args"
+      telescope.load_extension "file_browser"
     end,
   },
 
