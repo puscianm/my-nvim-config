@@ -255,6 +255,25 @@ return {
     opts = {
       heading = { sign = false },
       code = { sign = false, width = "block", right_pad = 2 },
+      -- LSP hover/signature popups are markdown buffers too (buftype=nofile).
+      -- Don't attach to them at all: its full-width rules and code banners
+      -- overflow the popup, and merely disabling it (overrides.buftype) still
+      -- stops nvim's own markdown conceal, so the ``` fences show.
+      -- The gK docs window (configs/hover.lua) opts back in.
+      ignore = function(buf)
+        return vim.bo[buf].buftype == "nofile" and not vim.b[buf].render_docs
+      end,
+      -- ...and since popups are ignored, this only reaches the gK window:
+      -- it's read-only, so never show raw markdown on the cursor line.
+      overrides = {
+        buftype = {
+          nofile = { anti_conceal = { enabled = false } },
+        },
+      },
+      -- By default it switches off the markdown query's conceal_lines rule for
+      -- every buffer the first time it attaches anywhere, so after a gK window
+      -- the (ignored) K popups would show their ``` fences again. Keep it on.
+      patterns = { markdown = { disable = false } },
     },
   },
 
